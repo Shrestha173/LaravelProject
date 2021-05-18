@@ -21,6 +21,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN useradd -G www-data,root -u $UID -d /home/$USER $USER
 RUN mkdir -p /home/$USER/.composer && \
     chown -R $USER:$USER /home/$USER
+COPY . /var/www
 # Set working directory
-WORKDIR /var/www
+WORKDIR /var/www/
+RUN chmod -R 777 *
 USER $USER
+RUN composer update
+RUN php artisan key:generate
+ENV PATH="~/.composer/vendor/bin:./vendor/bin:${PATH}"
